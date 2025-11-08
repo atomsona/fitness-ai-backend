@@ -1,6 +1,6 @@
-// controllers/questController.js
+
 import User from '../models/User.js';
-import Quest from '../models/Quest.js'; // Assuming you have a Quest model
+import Quest from '../models/Quest.js'; 
 
 export const getAllQuests = async (req, res) => {
   try {
@@ -29,12 +29,12 @@ export const getQuestById = async (req, res) => {
 export const completeQuest = async (req, res) => {
   try {
     const { questId } = req.body;
-    const userId = req.user._id; // Assuming you have auth middleware
+    const userId = req.user._id; 
 
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Avoid duplicates
+    
     if (!user.completedQuests.includes(questId)) {
       user.completedQuests.push(questId);
       await user.save();
@@ -51,7 +51,7 @@ export const completeQuest = async (req, res) => {
 
 export const getUserProgress = async (req, res) => {
   try {
-    const userId = req.user._id; // Assuming you have auth middleware
+    const userId = req.user._id; 
     
     const user = await User.findById(userId).select('completedQuests xp level coins');
     if (!user) {

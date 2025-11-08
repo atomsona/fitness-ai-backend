@@ -50,7 +50,7 @@ export const getStatistics = async (req, res) => {
     const totalQuests = await Quest.countDocuments();
     const completedQuests = await Progress.countDocuments({ status: 'completed' });
 
-    // Last 7 days activity
+   
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     

@@ -59,7 +59,7 @@ export const admin = (req, res, next) => {
 
 export const premium = (req, res, next) => {
   if (req.user && (req.user.isPremium || req.user.role === 'admin')) {
-    // Check if premium is expired
+    
     if (req.user.isPremium && req.user.premiumExpiresAt) {
       if (new Date() > req.user.premiumExpiresAt) {
         return res.status(403).json({ 

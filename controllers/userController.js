@@ -25,7 +25,7 @@ export const updateProfile = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Check if email is already taken by another user
+    
     if (email && email !== user.email) {
       const emailExists = await User.findOne({ email });
       if (emailExists) {
