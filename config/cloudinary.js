@@ -8,7 +8,7 @@ if (process.env.CLOUDINARY_CLOUD_NAME &&
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET
   });
-  console.log('✓ Cloudinary configured');
+  console.log('Cloudinary connected');
 }
 
 export default cloudinary;
