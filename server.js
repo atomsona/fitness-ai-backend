@@ -30,6 +30,12 @@ app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 
 
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Hello World',
+  });
+});
+
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
