@@ -16,39 +16,47 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: process.env.CLIENT_URL || 'https://fitness-ai-frontend-zhzx.vercel.app/',
   credentials: true
 }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(passport.initialize());
 
-
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/quests', questRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 
-
+// Root route
 app.get('/', (req, res) => {
   res.json({ 
     message: 'Hello World',
+    server: 'Fitness AI Backend',
+    status: 'Running'
   });
 });
 
+// 404 Handler
 app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' });
-});
-
-
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ 
-    message: 'Something went wrong!',
-    
+  res.status(404).json({ 
+    success: false,
+    message: 'Route not found' 
   });
 });
 
+// Error Handler
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || 'Internal Server Error'
+  });
+});
+
+// Connect to database
 connectDB();
 
 const PORT = process.env.PORT || 5000;
