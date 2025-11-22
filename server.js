@@ -16,47 +16,55 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'https://fitness-ai-frontend-zhzx.vercel.app/',
-  credentials: true
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://localhost:5000',
+      process.env.CLIENT_URL,
+      'https://fitness-ai-frontend-zhzx.vercel.app'
+    ];
+    
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['set-cookie']
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use(passport.initialize());
 
-// Routes
+
 app.use('/api/auth', authRoutes);
 app.use('/api/quests', questRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Root route
+
 app.get('/', (req, res) => {
   res.json({ 
     message: 'Hello World',
-    server: 'Fitness AI Backend',
-    status: 'Running'
   });
 });
 
-// 404 Handler
 app.use((req, res) => {
-  res.status(404).json({ 
-    success: false,
-    message: 'Route not found' 
-  });
+  res.status(404).json({ message: 'Route not found' });
 });
 
-// Error Handler
+
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.status(err.status || 500).json({
-    success: false,
-    message: err.message || 'Internal Server Error'
+  console.error(err.stack);
+  res.status(500).json({ 
+    message: 'Something went wrong!',
+    
   });
 });
 
-// Connect to database
 connectDB();
 
 const PORT = process.env.PORT || 5000;
