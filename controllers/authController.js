@@ -20,8 +20,8 @@ export const register = async (req, res) => {
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
-    }sw 60 * 60 * 1000
-    });
+    
+    };
 
     res.status(201).json({
       user: {

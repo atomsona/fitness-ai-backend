@@ -2,11 +2,9 @@
   "name": "fitness-ai-frontend",
   "private": true,
   "version": "1.0.0",
-  "type": "module",
+  "type": "module", 
   "scripts": {
-    "dev": "vite",
-    "build": " build",
-    "preview": "vite preview"
+    "start": "node server.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
