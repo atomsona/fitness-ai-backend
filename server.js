@@ -12,7 +12,8 @@ dotenv.config();
 const app = express();
 
 // CORS
-app.use(cors({ origin: '*', credentials: true }));
+// app.use(cors({ origin: '*', credentials: true }));
+app.use(cors());
 
 // Body & cookie
 app.use(express.json());
