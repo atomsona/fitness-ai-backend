@@ -21,17 +21,6 @@ export const register = async (req, res) => {
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
-    console.log('📥 Register request body:', req.body);
-    console.log('📥 Headers:', req.headers);
-
-    // Validation
-    if (!name || !email || !password) {
-      console.log('❌ Missing fields:', { name, email, password });
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide all required fields'
-      });
-    }
 
     const user = await User.create({ name, email, password });
     const refreshToken = generateRefreshToken(user._id);
