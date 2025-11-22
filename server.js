@@ -20,12 +20,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// DB connection
-const initDB = async () => {
-  await connectDB();
-};
-initDB();
-
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
@@ -41,12 +35,10 @@ app.use((req, res) => res.status(404).json({ success: false, message: 'Route not
 // Error handler
 app.use((err, req, res, next) => res.status(err.status || 500).json({ success: false, message: err.message || 'Internal Server Error' }));
 
-initDB().then((res) => {
+connectDB().then((res) => {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
 
 })
 // Local dev
 
-// Vercel serverless
-export default app;
