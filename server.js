@@ -21,11 +21,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // DB connection
-let cachedDb = null;
 const initDB = async () => {
-  if (cachedDb) return cachedDb;
-  cachedDb = await connectDB();
-  return cachedDb;
+  await connectDB();
 };
 initDB();
 
@@ -44,11 +41,12 @@ app.use((req, res) => res.status(404).json({ success: false, message: 'Route not
 // Error handler
 app.use((err, req, res, next) => res.status(err.status || 500).json({ success: false, message: err.message || 'Internal Server Error' }));
 
-// Local dev
-if (process.env.NODE_ENV !== 'production') {
+initDB().then((res) => {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
-}
+
+})
+// Local dev
 
 // Vercel serverless
 export default app;
