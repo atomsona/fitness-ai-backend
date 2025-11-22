@@ -11,14 +11,15 @@ import adminRoutes from './routes/admin.js';
 dotenv.config();
 const app = express();
 
-const allowedOrigins = [process.env.CLIENT_URL].filter(Boolean);
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+// CORS
+app.use(cors({ origin: [process.env.CLIENT_URL], credentials: true }));
 
+// Body & cookie
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Connect to DB
+// DB connection
 let cachedDb = null;
 const initDB = async () => {
   if (cachedDb) return cachedDb;
@@ -36,7 +37,7 @@ app.use('/api/admin', adminRoutes);
 // Root
 app.get('/', (req, res) => res.json({ message: 'Fitness AI Backend Running' }));
 
-// 404 handler
+// 404
 app.use((req, res) => res.status(404).json({ success: false, message: 'Route not found', path: req.path }));
 
 // Error handler
