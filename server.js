@@ -14,32 +14,37 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
+// CRITICAL: Handle preflight requests FIRST
+app.options('*', cors({
+  origin: [
+    'http://localhost:5173',
+    'https://fitness-ai-frontend-zhzx.vercel.app',
+    process.env.CLIENT_URL
+  ].filter(Boolean),
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// CORS middleware
 app.use(cors({
-  origin: function(origin, callback) {
-    const allowedOrigins = [
-      'http://localhost:5173',
-      'http://localhost:5000',
-      process.env.CLIENT_URL,
-      'https://fitness-ai-frontend-zhzx.vercel.app'
-    ];
-    
-    // Allow requests with no origin (mobile apps, Postman, etc.)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: [
+    'http://localhost:5173',
+    'https://fitness-ai-frontend-zhzx.vercel.app',
+    process.env.CLIENT_URL
+  ].filter(Boolean),
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   exposedHeaders: ['set-cookie']
 }));
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(passport.initialize());
 
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/quests', questRoutes);
 app.use('/api/user', userRoutes);
@@ -49,21 +54,29 @@ app.use('/api/admin', adminRoutes);
 app.get('/', (req, res) => {
   res.json({ 
     message: 'Hello World',
+    server: 'Fitness AI Backend',
+    status: 'Running'
   });
 });
 
+
 app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' });
+  res.status(404).json({ 
+    success: false,
+    message: 'Route not found',
+    requestedPath: req.path
+  });
 });
 
 
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ 
-    message: 'Something went wrong!',
-    
+  console.error('Error:', err);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || 'Internal Server Error'
   });
 });
+
 
 connectDB();
 
