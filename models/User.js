@@ -21,13 +21,20 @@ const userSchema = new mongoose.Schema({
   refreshToken: String
 }, { timestamps: true });
 
+// Hash password before saving, only if it exists
 userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
+  if (!this.isModified('password') || !this.password) return next();
+  try {
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
+  } catch (err) {
+    next(err);
+  }
 });
 
+// Compare password method
 userSchema.methods.comparePassword = async function(candidatePassword) {
+  if (!this.password) return false; // Google users won't have password
   return await bcrypt.compare(candidatePassword, this.password);
 };
 

@@ -1,16 +1,38 @@
-import passport from 'passport'
-import {Strategy} from 'passport-google-oauth20'
-import dotenv from 'dotenv'
-dotenv.config()
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import User from "../models/User.js";
+import dotenv from "dotenv";
 
+dotenv.config();
 
-passport.use(new Strategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL,
-    scope: ['email', 'profile']
-}, async function(accessToken, refreshToken, profile, done){
-    done(null, {email: profile.emails[0].value, fullName: profile.displayName, avatar: profile.photos[0].value})
-}) )
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const email = profile.emails[0].value;
+        let user = await User.findOne({ email });
 
-export default passport
+        if (!user) {
+          user = await User.create({
+            name: profile.displayName,
+            email,
+            avatar: profile.photos[0].value,
+            password: null, // Google user
+            provider: "google"
+          });
+        }
+
+        return done(null, user);
+      } catch (err) {
+        return done(err, null);
+      }
+    }
+  )
+);
+
+export default passport;
