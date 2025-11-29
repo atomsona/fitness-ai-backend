@@ -3,13 +3,13 @@ import jwt from 'jsonwebtoken';
 
 const generateAccessToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.ACCESS_TOKEN_EXPIRE,
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRE
   });
 };
 
 const generateRefreshToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, {
-    expiresIn: process.env.REFRESH_TOKEN_EXPIRE,
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRE
   });
 };
 
@@ -20,10 +20,8 @@ export const register = async (req, res) => {
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
-    }
-
-    // FIX: create user
-    const user = await User.create({ name, email, password });
+    
+    };
 
     res.status(201).json({
       user: {
@@ -31,9 +29,9 @@ export const register = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        isPremium: user.isPremium,
+        isPremium: user.isPremium
       },
-      accessToken: generateAccessToken(user._id),
+      accessToken: generateAccessToken(user._id)
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -57,7 +55,7 @@ export const login = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
     res.json({
@@ -69,9 +67,9 @@ export const login = async (req, res) => {
         isPremium: user.isPremium,
         xp: user.xp,
         level: user.level,
-        coins: user.coins,
+        coins: user.coins
       },
-      accessToken: generateAccessToken(user._id),
+      accessToken: generateAccessToken(user._id)
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -122,12 +120,8 @@ export const googleCallback = async (req, res) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000
   });
 
-  res.redirect(
-    `${process.env.CLIENT_URL}/auth-success?token=${generateAccessToken(
-      req.user._id
-    )}`
-  );
+  res.redirect(`${process.env.CLIENT_URL}/auth-success?token=${generateAccessToken(req.user._id)}`);
 };
