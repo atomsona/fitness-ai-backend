@@ -1,10 +1,8 @@
 import User from '../models/User.js';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// -----------------------------
-// TOKEN HELPERS
-// -----------------------------
+
 const generateAccessToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.ACCESS_TOKEN_EXPIRE || '1h'
@@ -17,9 +15,7 @@ const generateRefreshToken = (id) => {
   });
 };
 
-// -----------------------------
-// REGISTER
-// -----------------------------
+
 export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -53,9 +49,7 @@ export const register = async (req, res) => {
   }
 };
 
-// -----------------------------
-// LOGIN
-// -----------------------------
+
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body || {};
