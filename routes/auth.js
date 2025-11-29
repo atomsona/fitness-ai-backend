@@ -1,7 +1,7 @@
 import express from 'express';
 import passport from '../config/passport.js';
 
-// Controllers
+
 import {
   register,
   login,

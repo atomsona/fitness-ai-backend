@@ -70,7 +70,7 @@ export const login = async (req, res) => {
     user.refreshToken = refreshToken;
     await user.save();
 
-    // store refresh token as httpOnly cookie
+   
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -93,9 +93,7 @@ export const login = async (req, res) => {
   }
 };
 
-// -----------------------------
-// REFRESH TOKEN
-// -----------------------------
+
 export const refresh = async (req, res) => {
   try {
     const { refreshToken } = req.cookies;
@@ -119,9 +117,7 @@ export const refresh = async (req, res) => {
   }
 };
 
-// -----------------------------
-// LOGOUT
-// -----------------------------
+
 export const logout = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -139,9 +135,7 @@ export const logout = async (req, res) => {
   }
 };
 
-// -----------------------------
-// GOOGLE OAUTH CALLBACK
-// -----------------------------
+
 export const googleCallback = async (req, res) => {
   try {
     let user = await User.findOne({ email: req.user.email });

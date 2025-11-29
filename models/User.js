@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: function() { return this.provider === 'local'; }
   },
-  role: { type: String, enum: ['customer', 'admin'], default: 'customer' },
+  role: { type: String, enum: ['customer', 'admin', 'user'], default: 'customer' },
   provider: { type: String, enum: ['local', 'google'], default: 'local' },
   googleId: String,
   avatar: String,
