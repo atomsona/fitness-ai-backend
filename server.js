@@ -12,13 +12,7 @@ import serverless from 'serverless-http';
 dotenv.config();
 const app = express();
 
-// CORS — MUST be first
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true,
-  })
-);
+
 
 // Required for Vercel preflight
 app.options(
